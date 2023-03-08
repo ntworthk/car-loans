@@ -45,7 +45,8 @@ ob_user_id <- scraped_data |>
   html_elements("a") |> 
   (\(x) x[str_detect(html_attr(x, "href"), "user")])() |> 
   html_attr("href") |> 
-  str_remove("/user/")
+  str_remove("/user/") |> 
+  as.integer()
 
 ob_cat <- scraped_data |> 
   html_elements("a") |> 
