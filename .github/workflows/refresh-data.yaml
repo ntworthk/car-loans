@@ -29,9 +29,12 @@ jobs:
       - name: Install packages
         run: Rscript -e 'install.packages(c("tidyverse", "rvest", "here"))'
 
-      - name: Get data
+      - name: Get data - rates
         run: Rscript -e 'source(here::here("source", "scrape-daily-rate.R"), echo = TRUE)'
 
+      - name: Get data - ozbargain top
+        run: Rscript -e 'source(here::here("source", "scrape-ob.R"), echo = TRUE)'
+        
       - name: Commit
         run: |
           git config --global user.name 'Nick Twort'
