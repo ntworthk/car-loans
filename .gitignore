@@ -6,6 +6,7 @@
 .Renviron
 !/data
 /data/*
+!data/scraped*
 !data/README.md
 !data/raw
 data/raw/*
