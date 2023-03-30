@@ -1,14 +1,6 @@
 library(tidyverse)
 library(httr)
 
-res <- httr::GET(url = "https://www.woolworths.com.au/")
-
-cookies <- cookies(res)
-tmp_cookies <- cookies$value
-names(tmp_cookies) <- cookies$name
-cookies <- tmp_cookies
-cookies["bff_region"] <- "syd2"
-
 headers = c(
   `authority` = "www.woolworths.com.au",
   `accept` = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -25,6 +17,15 @@ headers = c(
   `upgrade-insecure-requests` = "1",
   `user-agent` = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
 )
+
+res <- httr::GET(url = "https://www.woolworths.com.au/", httr::add_headers(.headers=headers))
+
+cookies <- cookies(res)
+tmp_cookies <- cookies$value
+names(tmp_cookies) <- cookies$name
+cookies <- tmp_cookies
+cookies["bff_region"] <- "syd2"
+
 
 res <- httr::GET(url = "https://www.woolworths.com.au/apis/ui/product/detail/186910", httr::add_headers(.headers=headers), set_cookies(cookies))
 
