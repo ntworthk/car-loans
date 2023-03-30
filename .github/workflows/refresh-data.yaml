@@ -38,6 +38,9 @@ jobs:
       - name: Get data - Wilson car parks
         run: Rscript -e 'source(here::here("source", "scrape-parks.R"), echo = TRUE)'
         
+      - name: Get data - avos
+        run: Rscript -e 'source(here::here("source", "scrape-avos.R"), echo = TRUE)'
+        
       - name: Commit
         run: |
           git config --global user.name 'Nick Twort'
