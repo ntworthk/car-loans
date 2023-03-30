@@ -32,4 +32,4 @@ res <- GET(
 
 parks <- content(res)$carParks
 
-write_rds(parks, file.path("data", paste0("scraped_parks", Sys.Date(), ".rds")))
+write_rds(parks, file.path("data", paste0("scraped_parks_", Sys.Date(), ".rds")))
