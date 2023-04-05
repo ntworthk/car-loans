@@ -33,4 +33,19 @@ avos <- content(res)
 
 write_rds(avos, file.path("data", paste0("avos_", Sys.Date(), ".rds")))
 
+avos <- list.files("data", "avo", full.names = TRUE)
+names(avos) <- str_extract(avos, "[0-9]{4}-[0-9]{2}-[0-9]{2}")
 
+g <- map_dfr(avos, function(x) {
+  tibble(price = read_rds(x)$Product$Price)
+}, .id = "date") |> 
+  mutate(date = as_date(date)) |> 
+  ggplot(aes(x = date, y = price)) +
+  geom_line()
+
+ggsave(filename = "figures/png/avo_price.png",
+       plot = g,
+       width = 17.00,
+       height = 11.46,
+       units = "cm"
+)
