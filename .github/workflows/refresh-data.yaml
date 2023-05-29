@@ -27,7 +27,7 @@ jobs:
         run: Rscript -e 'install.packages(c("vctrs"))'
 
       - name: Install packages
-        run: Rscript -e 'install.packages(c("tidyverse", "rvest", "here", "httr"))'
+        run: Rscript -e 'install.packages(c("tidyverse", "rvest", "here", "httr", "janitor"))'
 
       - name: Get data - rates
         run: Rscript -e 'source(here::here("source", "scrape-daily-rate.R"), echo = TRUE)'
