@@ -33,3 +33,46 @@ res <- GET(
 parks <- content(res)$carParks
 
 write_rds(parks, file.path("data", paste0("scraped_parks_", Sys.Date(), ".rds")))
+
+park_data <- list.files("data", "scraped_parks", full.names = TRUE)
+names(park_data) <- park_data
+
+rates <- map_dfr(park_data, function(x) {
+  
+  dat <- read_rds(x)
+  
+  dd <- map_dfr(dat, function(park) {
+    
+    if (park$carParkNumber != 2078) {
+      return(tibble())
+    }
+    
+    map_dfr(park$rates, function(y) {
+      
+      map_dfr(y$rates, as_tibble_row) |> 
+        mutate(rateType = y$rateType)
+      
+    }) |> 
+      mutate(name = park$name, number = park$carParkNumber)
+    
+  })  |> 
+    filter(rateType == "Hourly", timeSpan == "0.0 - 1.0 hrs")
+
+    
+  
+}, .id = "date")
+
+g <- rates |> 
+  mutate(date = parse_date(str_remove_all(date, "data.*_|\\.rds"))) |> 
+  ggplot(aes(x = date, y = price)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Price at 25 Martin Place car park for < 1 hour")
+
+ggsave(filename = "figures/png/car_price.png",
+       plot = g,
+       width = 17.00,
+       height = 11.46,
+       units = "cm"
+)
+

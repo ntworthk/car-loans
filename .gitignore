@@ -13,6 +13,7 @@ data/processed/*
 figures/png/*
 !figures/png/README.md
 !figures/png/avo_price.png
+!figures/png/car_price.png
 !figures/png/commbank_rate.png
 !figures/png/ob_cats.png
 !/outputs
