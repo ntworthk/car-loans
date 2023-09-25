@@ -37,11 +37,11 @@ write_csv(scraped_data, file.path("data", paste0("scraped_commbank_rates_", Sys.
 
 comm <- list.files("data", "comm", full.names = TRUE)
 
-g <- map_dfr(comm, read_csv) |> 
+g <- map_dfr(comm, read_csv, show_col_types = FALSE) |> 
   ggplot(aes(x = date, y = netbank_saver_rate)) +
   geom_line() +
   geom_point() +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1))
+  scale_y_continuous(labels = scales::percent_format(accuracy = 0.01))
 
 ggsave(filename = "figures/png/commbank_rate.png",
        plot = g,
