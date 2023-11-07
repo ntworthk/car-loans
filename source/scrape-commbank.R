@@ -33,11 +33,13 @@ scraped_data <- read_html(url) |>
 
 scraped_data <- tibble(date = Sys.Date(), netbank_saver_rate = scraped_data)
 
-write_csv(scraped_data, file.path("data", paste0("scraped_commbank_rates_", Sys.Date(), ".csv")))
+old_data <- read_rds("data/scraped_commbank_rates.rds")
 
-comm <- list.files("data", "comm", full.names = TRUE)
+full_data <- bind_rows(old_data, scraped_data)
 
-g <- map_dfr(comm, read_csv, show_col_types = FALSE) |> 
+write_rds(full_data, "data/scraped_commbank_rates.rds")
+
+g <- full_data |> 
   ggplot(aes(x = date, y = netbank_saver_rate)) +
   geom_line() +
   geom_point() +

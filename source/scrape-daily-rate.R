@@ -26,4 +26,8 @@ scraped_data <- read_html(url) |>
     ) |> 
   select(date, type, rate)
 
-write_csv(scraped_data, file.path("data", paste0("scraped_rates_", Sys.Date(), ".csv")))
+old_rates <- read_rds("data/scraped_rates.rds")
+
+all_rates <- bind_rows(old_rates, scraped_data)
+
+write_rds(all_rates, "data/scraped_rates.rds")

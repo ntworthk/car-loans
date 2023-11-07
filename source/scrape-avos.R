@@ -31,15 +31,16 @@ res <- httr::GET(url = "https://www.woolworths.com.au/apis/ui/product/detail/186
 
 avos <- content(res)
 
-write_rds(avos, file.path("data", paste0("avos_", Sys.Date(), ".rds")))
+today_avo <- tibble(date = Sys.Date(), price = avos$Product$Price)
 
-avos <- list.files("data", "avo", full.names = TRUE)
-names(avos) <- str_extract(avos, "[0-9]{4}-[0-9]{2}-[0-9]{2}")
+old_avos <- read_rds("data/avos.rds")
 
-g <- map_dfr(avos, function(x) {
-  tibble(price = read_rds(x)$Product$Price)
-}, .id = "date") |> 
-  mutate(date = as_date(date)) |> 
+all_avos <- bind_rows(old_avos, today_avo)
+
+write_rds(all_avos, "data/avos.rds")
+
+
+g <- all_avos |> 
   ggplot(aes(x = date, y = price)) +
   geom_line()
 
