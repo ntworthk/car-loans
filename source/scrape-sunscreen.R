@@ -9,6 +9,8 @@ res <- GET(
   url = "https://pds.chemistwarehouse.com.au/search?identifier=AU&fh_location=//catalog01/en_AU/categories%3C{catalog01_chemau}&fh_secondid=92927"
   )
 
+print(http_status(res))
+
 x <- content(res) |> 
   fromJSON()
 
