@@ -29,26 +29,26 @@ jobs:
       - name: Install packages
         run: Rscript -e 'install.packages(c("tidyverse", "rvest", "here", "httr", "janitor"))'
 
-      # - name: Get data - rates
-        # run: Rscript -e 'source(here::here("source", "scrape-daily-rate.R"), echo = TRUE)'
+      - name: Get data - rates
+        run: Rscript -e 'source(here::here("source", "scrape-daily-rate.R"), echo = TRUE)'
 
-      # - name: Get data - ozbargain top
-        # run: Rscript -e 'source(here::here("source", "scrape-ob.R"), echo = TRUE)'
+      - name: Get data - ozbargain top
+        run: Rscript -e 'source(here::here("source", "scrape-ob.R"), echo = TRUE)'
         
-      # - name: Get data - Wilson car parks
-        # run: Rscript -e 'source(here::here("source", "scrape-parks.R"), echo = TRUE)'
+      - name: Get data - Wilson car parks
+        run: Rscript -e 'source(here::here("source", "scrape-parks.R"), echo = TRUE)'
         
-      # - name: Get data - avos
-        # run: Rscript -e 'source(here::here("source", "scrape-avos.R"), echo = TRUE)'
+      - name: Get data - avos
+        run: Rscript -e 'source(here::here("source", "scrape-avos.R"), echo = TRUE)'
 
-      # - name: Get data - commbank
-        # run: Rscript -e 'source(here::here("source", "scrape-commbank.R"), echo = TRUE)'
+      - name: Get data - commbank
+        run: Rscript -e 'source(here::here("source", "scrape-commbank.R"), echo = TRUE)'
         
-      # - name: Get data - uk fuel
-        # run: Rscript -e 'source(here::here("source", "scrape-uk-fuel.R"), echo = TRUE)'
+      - name: Get data - uk fuel
+        run: Rscript -e 'source(here::here("source", "scrape-uk-fuel.R"), echo = TRUE)'
         
-      - name: Get data - sunscreen
-        run: Rscript -e 'source(here::here("source", "scrape-sunscreen.R"), echo = TRUE)'
+      # - name: Get data - sunscreen
+        # run: Rscript -e 'source(here::here("source", "scrape-sunscreen.R"), echo = TRUE)'
         
       - name: Commit
         run: |
