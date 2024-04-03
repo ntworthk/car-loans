@@ -34,35 +34,29 @@ parks <- content(res)$carParks
 
 write_rds(parks, file.path("data", paste0("scraped_parks_", Sys.Date(), ".rds")))
 
-park_data <- list.files("data", "scraped_parks", full.names = TRUE)
-names(park_data) <- park_data
-
-rates <- map_dfr(park_data, function(x) {
+old_mp_data <- read_rds(file.path("data", "scraped_parks_mp.rds"))
+new_mp_data <- map_dfr(parks, function(park) {
   
-  dat <- read_rds(x)
+  if (park$carParkNumber != 2078) {
+    return(tibble())
+  }
   
-  dd <- map_dfr(dat, function(park) {
+  map_dfr(park$rates, function(y) {
     
-    if (park$carParkNumber != 2078) {
-      return(tibble())
-    }
+    map_dfr(y$rates, as_tibble_row) |> 
+      mutate(rateType = y$rateType)
     
-    map_dfr(park$rates, function(y) {
-      
-      map_dfr(y$rates, as_tibble_row) |> 
-        mutate(rateType = y$rateType)
-      
-    }) |> 
-      mutate(name = park$name, number = park$carParkNumber)
-    
-  })  |> 
-    filter(rateType == "Hourly", timeSpan == "0.0 - 1.0 hrs")
-
-    
+  }) |> 
+    mutate(name = park$name, number = park$carParkNumber)
   
-}, .id = "date")
+})  |> 
+  filter(rateType == "Hourly", timeSpan == "0.0 - 1.0 hrs") |> 
+  mutate(date = file.path("data", paste0("scraped_parks_", Sys.Date(), ".rds")))
 
-g <- rates |> 
+all_mp_data <- bind_rows(old_mp_data, new_mp_data)
+write_rds(all_mp_data, file.path("data", "scraped_parks_mp.rds"))
+
+g <- all_mp_data |> 
   mutate(date = parse_date(str_remove_all(date, "data.*_|\\.rds"))) |> 
   ggplot(aes(x = date, y = price)) +
   geom_line() +
