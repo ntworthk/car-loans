@@ -47,6 +47,9 @@ jobs:
       - name: Get data - uk fuel
         run: Rscript -e 'source(here::here("source", "scrape-uk-fuel.R"), echo = TRUE)'
         
+      - name: Get data - HN
+        run: Rscript -e 'source(here::here("source", "scrape-hn.R"), echo = TRUE)'
+        
       # - name: Get data - sunscreen
         # run: Rscript -e 'source(here::here("source", "scrape-sunscreen.R"), echo = TRUE)'
         
