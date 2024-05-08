@@ -32,7 +32,7 @@ res <- GET(
 
 parks <- content(res)$carParks
 
-write_rds(parks, file.path("data", paste0("scraped_parks_", Sys.Date(), ".rds")))
+write_rds(parks, file.path("data", paste0("scraped_parks_", Sys.Date(), ".rds")), compress = "gz")
 
 old_mp_data <- read_rds(file.path("data", "scraped_parks_mp.rds"))
 new_mp_data <- map_dfr(parks, function(park) {

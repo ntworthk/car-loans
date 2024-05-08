@@ -10,6 +10,7 @@ library(purrr)
 library(dplyr)
 library(tidyr)
 library(lubridate)
+library(arrow)
 
 #--- Import data ---------------------------------------------------------------
 
@@ -51,7 +52,7 @@ data <- data |>
   pivot_longer(cols = -c(retailer, last_updated, site_id, brand, address, postcode, latitude, longitude), names_to = "fuel", values_to = "price") |> 
   mutate(scrape_date = Sys.time())
 
-old_data <- readRDS(paste0("data/uk_fuel_prices.rds"))
+old_data <- read_parquet("data/uk_fuel_prices.parquet")
 
 bind_rows(old_data, data) |>
-  saveRDS(paste0("data/uk_fuel_prices.rds"))
+  write_parquet("data/uk_fuel_prices.parquet")
