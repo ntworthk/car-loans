@@ -27,7 +27,10 @@ jobs:
         run: Rscript -e 'install.packages(c("vctrs"))'
 
       - name: Install packages
-        run: Rscript -e 'install.packages(c("tidyverse", "rvest", "here", "httr", "janitor", "arrow"))'
+        run: Rscript -e 'install.packages(c("tidyverse", "rvest", "here", "httr", "janitor"))'
+
+      - name: Install arrow
+        run: Rscript -e 'install.packages("arrow", repos = c("https://apache.r-universe.dev", "https://cloud.r-project.org"))'
 
       - name: Get data - rates
         run: Rscript -e 'source(here::here("source", "scrape-daily-rate.R"), echo = TRUE)'
