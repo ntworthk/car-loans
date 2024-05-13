@@ -31,6 +31,7 @@ headers <- c(
   `Connection` = "keep-alive",
   `Content-Type` = "application/x-www-form-urlencoded",
   `DNT` = "1",
+  `Host` = "www2.medicareaustralia.gov.au",
   `Origin` = "https://www2.medicareaustralia.gov.au",
   `Pragma` = "no-cache",
   `Referer` = "https://www2.medicareaustralia.gov.au/pext/pdsPortal/pub/approvedCollectionCentreSearch.faces",
@@ -61,15 +62,22 @@ res <- POST(
 
 scraped_data <- res |>
   content() |> 
-  html_nodes("table") |>
-  html_table(fill = TRUE) |>
-  (\(x) x[[1]])() |> 
-  as_tibble() |>
-  clean_names() |> 
-  mutate(date = Sys.Date())
+  html_nodes("table")
 
-old_data <- read_parquet("data/scraped_accs.parquet")
+if (length(scraped_data) > 0) {
+  scraped_data <- scraped_data |> 
+    html_table(fill = TRUE) |>
+    (\(x) x[[1]])() |> 
+    as_tibble() |>
+    clean_names() |> 
+    mutate(date = Sys.Date())
+  
+  
+  old_data <- read_parquet("data/scraped_accs.parquet")
+  
+  full_data <- bind_rows(old_data, scraped_data)
+  
+  write_parquet(full_data, "data/scraped_accs.parquet")
+  
+}
 
-full_data <- bind_rows(old_data, scraped_data)
-
-write_parquet(full_data, "data/scraped_accs.parquet")
