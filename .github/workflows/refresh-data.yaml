@@ -55,6 +55,9 @@ jobs:
 
       - name: Get data - ACCs
         run: Rscript -e 'source(here::here("source", "scrape-accs.R"), echo = TRUE)'
+
+      - name: Get data - Hoyts
+        run: Rscript -e 'source(here::here("source", "scrape-hoyts.R"), echo = TRUE)'
         
       # - name: Get data - sunscreen
         # run: Rscript -e 'source(here::here("source", "scrape-sunscreen.R"), echo = TRUE)'
