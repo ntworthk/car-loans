@@ -31,13 +31,21 @@ stores <- list(
 
 data <- map_dfr(stores, function(store) {
   
-  store |> 
-    fromJSON() |> 
-    as_tibble() |> 
-    unnest_wider(stations) |> 
-    unnest_wider(location) |> 
-    unnest_wider(prices) |> 
-    mutate(across(c(latitude, longitude), as.numeric))
+  tryCatch(
+    {
+      store |> 
+        fromJSON() |> 
+        as_tibble() |> 
+        unnest_wider(stations) |> 
+        unnest_wider(location) |> 
+        unnest_wider(prices) |> 
+        mutate(across(c(latitude, longitude), as.numeric))
+    },
+    error = function(e) {
+      tibble()
+    }
+  )
+  
   
 }, .id = "retailer")
 
