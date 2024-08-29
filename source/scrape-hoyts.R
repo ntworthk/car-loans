@@ -42,6 +42,7 @@ cinemas <- cinemas |>
       compact() |> 
       (\(x) {
         x$features <- list(x$features)
+        x$address <- list(x$address)
         x
       })() |> 
       as_tibble_row()
