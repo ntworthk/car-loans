@@ -70,7 +70,7 @@ blood_levels <- map_dfr(
           " ",
           direction = "positive|negative",
           " level is ",
-          status = "[A-z]+",
+          status = "[A-z ]+",
           "\\."
         )
       )
