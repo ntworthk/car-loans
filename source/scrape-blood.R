@@ -60,20 +60,19 @@ blood_levels <- map_dfr(
       (\(x) x[[3]]$data)() |> 
       read_html() |> 
       html_elements(".drop") |> 
-      html_attr(name = "aria-label") |> 
-      enframe(name = NULL) |> 
-      mutate(value = str_remove_all(value, "blood type ")) |> 
-      separate_wider_regex(
-        value,
-        patterns = c(
-          type = "[A-z]+",
-          " ",
-          direction = "positive|negative",
-          " level is ",
-          status = "[A-z ]+",
-          "\\."
+      map_dfr(function(dd) {
+        tibble(
+          id = dd |> html_attr("id"),
+          cl = dd |> html_attr("class")
         )
-      )
+      }) |> 
+      mutate(
+        type = str_remove_all(id, "type|\\+|\\-"),
+        direction = ifelse(str_detect(id, "\\+"), "positive", "negative"),
+        status = str_extract(cl, "[a-z]+$")
+             ) |> 
+      select(type, direction, status)
+      
     
   },
   .id = "state"
