@@ -33,7 +33,7 @@ up_home_loans <- x$current_interest_rates |>
     announce_at = ymd_hms(announce_at),
     start_date = ymd(start_date)
   ) |> 
-  mutate(timestamp = Sys.time())
+  mutate(timestamp = with_tz(Sys.time(), tzone = "UTC"))
 
 concat_tables(
   read_parquet("data/up_home_loans.parquet", as_data_frame = FALSE),
