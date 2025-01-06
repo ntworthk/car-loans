@@ -64,6 +64,9 @@ jobs:
 
       - name: Get data - blood
         run: Rscript -e 'source(here::here("source", "scrape-blood.R"), echo = TRUE)'
+        
+      - name: Get data - up
+        run: Rscript -e 'source(here::here("source", "scrape-up.R"), echo = TRUE)'
 
       # - name: Get data - sunscreen
         # run: Rscript -e 'source(here::here("source", "scrape-sunscreen.R"), echo = TRUE)'
