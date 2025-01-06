@@ -33,7 +33,7 @@ up_home_loans <- x$current_interest_rates |>
     announce_at = with_tz(ymd_hms(announce_at), "Australia/Sydney"),
     start_date = ymd(start_date)
   ) |> 
-  mutate(timestamp = Sys.time())
+  mutate(timestamp = with_tz(Sys.time(),))
 
 
 concat_tables(
