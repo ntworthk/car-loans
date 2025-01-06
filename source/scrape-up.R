@@ -30,11 +30,10 @@ up_home_loans <- x$current_interest_rates |>
   pivot_wider(id_cols = everything()) |> 
   mutate(
     across(matches("rate"), as.numeric),
-    announce_at = with_tz(ymd_hms(announce_at), "Australia/Sydney"),
+    announce_at = ymd_hms(announce_at),
     start_date = ymd(start_date)
   ) |> 
-  mutate(timestamp = with_tz(Sys.time(),))
-
+  mutate(timestamp = Sys.time())
 
 concat_tables(
   read_parquet("data/up_home_loans.parquet", as_data_frame = FALSE),
