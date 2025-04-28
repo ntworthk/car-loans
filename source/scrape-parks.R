@@ -32,7 +32,7 @@ res <- GET(
 
 parks <- content(res)$carParks
 
-write_rds(parks, file.path("data", paste0("scraped_parks_", Sys.Date(), ".rds")), compress = "gz")
+write_rds(parks, file.path("data", "parks", paste0("scraped_parks_", Sys.Date(), ".rds")), compress = "gz")
 
 old_mp_data <- read_rds(file.path("data", "scraped_parks_mp.rds"))
 new_mp_data <- map_dfr(parks, function(park) {
@@ -51,7 +51,7 @@ new_mp_data <- map_dfr(parks, function(park) {
   
 })  |> 
   filter(rateType == "Hourly", timeSpan == "0.0 - 1.0 hrs") |> 
-  mutate(date = file.path("data", paste0("scraped_parks_", Sys.Date(), ".rds")))
+  mutate(date = file.path("data", "parks", paste0("scraped_parks_", Sys.Date(), ".rds")))
 
 all_mp_data <- bind_rows(old_mp_data, new_mp_data)
 write_rds(all_mp_data, file.path("data", "scraped_parks_mp.rds"))
