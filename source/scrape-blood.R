@@ -31,59 +31,62 @@ params = list(
 states <- c("all australia", "australian capital territory", "tasmania", "new south wales", "northern territory", "queensland", "south australia", "victoria", "western australia")
 names(states) <- states
 
-blood_levels <- map_dfr(
-  states,
-  function(state) {
-    
-    data = list(
-      form_build_id = "form-nvZEPBid8saHd3pqCo8mkGUCoit2loa0DpMaqfe4mnk",
-      form_id = "stock_level_form",
-      lb_region_select = "victoria",
-      `_triggering_element_name` = "lb_region_select",
-      `_drupal_ajax` = "1",
-      `ajax_page_state[theme]` = "arcbs",
-      `ajax_page_state[theme_token]` = "",
-      `ajax_page_state[libraries]` = "eJyNUUFywyAM_BCGJzEyyLYSGVEETtzXl9ietIccegHtame1CChhVBcYVHebJKKBg5lZRuBB686U5ovk0WuVcD-hnzFhAXYRKjDsWAbcMFU1I9aKxeMzi2L0E3GH3fPUm3DHSFWKhxCkRJLk3pWdiqSKKZrA9DKjiH4Dpj6kt_3tq2HZXdjsWVma8L_Sq4dmgoBVXSwtA9sT2f7O-_CgOGP9LNgIHzrADZ5mIuTo5yItO2Rc-3S7SKHvnh3YVxjV9I1Iqz6SBtleQSRhEDYZCswF8vL2_2VsS7mNTLpgNEprZvRZcst-5L53dR84o7tWXN0IiubI6I7THkn_EqvExpfGv7p-of6fPdp1_wCnTc8B"
-    )
-    
-    res <- httr::POST(
-      url = "https://www.lifeblood.com.au/blood/blood-supply-levels",
-      httr::add_headers(.headers=headers),
-      query = params,
-      # httr::set_cookies(.cookies = cookies),
-      body = data,
-      encode = "form"
-      )
-    
-    res |> 
-      content() |> 
-      (\(x) x[[3]]$data)() |> 
-      read_html() |> 
-      html_elements(".drop") |> 
-      map_dfr(function(dd) {
-        tibble(
-          id = dd |> html_attr("id"),
-          cl = dd |> html_attr("class")
+try(
+  {
+    blood_levels <- map_dfr(
+      states,
+      function(state) {
+        
+        data = list(
+          form_build_id = "form-nvZEPBid8saHd3pqCo8mkGUCoit2loa0DpMaqfe4mnk",
+          form_id = "stock_level_form",
+          lb_region_select = "victoria",
+          `_triggering_element_name` = "lb_region_select",
+          `_drupal_ajax` = "1",
+          `ajax_page_state[theme]` = "arcbs",
+          `ajax_page_state[theme_token]` = "",
+          `ajax_page_state[libraries]` = "eJyNUUFywyAM_BCGJzEyyLYSGVEETtzXl9ietIccegHtame1CChhVBcYVHebJKKBg5lZRuBB686U5ovk0WuVcD-hnzFhAXYRKjDsWAbcMFU1I9aKxeMzi2L0E3GH3fPUm3DHSFWKhxCkRJLk3pWdiqSKKZrA9DKjiH4Dpj6kt_3tq2HZXdjsWVma8L_Sq4dmgoBVXSwtA9sT2f7O-_CgOGP9LNgIHzrADZ5mIuTo5yItO2Rc-3S7SKHvnh3YVxjV9I1Iqz6SBtleQSRhEDYZCswF8vL2_2VsS7mNTLpgNEprZvRZcst-5L53dR84o7tWXN0IiubI6I7THkn_EqvExpfGv7p-of6fPdp1_wCnTc8B"
         )
-      }) |> 
-      mutate(
-        type = str_remove_all(id, "type|\\+|\\-"),
-        direction = ifelse(str_detect(id, "\\+"), "positive", "negative"),
-        status = str_extract(cl, "[a-z]+$")
-             ) |> 
-      select(type, direction, status)
-      
+        
+        res <- httr::POST(
+          url = "https://www.lifeblood.com.au/blood/blood-supply-levels",
+          httr::add_headers(.headers=headers),
+          query = params,
+          # httr::set_cookies(.cookies = cookies),
+          body = data,
+          encode = "form"
+          )
+        
+        res |> 
+          content() |> 
+          (\(x) x[[3]]$data)() |> 
+          read_html() |> 
+          html_elements(".drop") |> 
+          map_dfr(function(dd) {
+            tibble(
+              id = dd |> html_attr("id"),
+              cl = dd |> html_attr("class")
+            )
+          }) |> 
+          mutate(
+            type = str_remove_all(id, "type|\\+|\\-"),
+            direction = ifelse(str_detect(id, "\\+"), "positive", "negative"),
+            status = str_extract(cl, "[a-z]+$")
+                 ) |> 
+          select(type, direction, status)
+          
+        
+      },
+      .id = "state"
+    ) |> 
+      mutate(timestamp = Sys.time())
     
-  },
-  .id = "state"
-) |> 
-  mutate(timestamp = Sys.time())
-
-concat_tables(
-  read_parquet("data/blood_levels.parquet", as_data_frame = FALSE),
-  arrow_table(blood_levels)
-) |> 
-  write_parquet(sink = "data/blood_levels_temp.parquet")
-
-file.rename("data/blood_levels_temp.parquet", "data/blood_levels.parquet")
-
+    concat_tables(
+      read_parquet("data/blood_levels.parquet", as_data_frame = FALSE),
+      arrow_table(blood_levels)
+    ) |> 
+      write_parquet(sink = "data/blood_levels_temp.parquet")
+    
+    file.rename("data/blood_levels_temp.parquet", "data/blood_levels.parquet")
+  }
+)
