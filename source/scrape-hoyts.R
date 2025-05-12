@@ -50,7 +50,7 @@ cinemas <- cinemas |>
 
 concat_tables(
   read_parquet("data/hoyts_cinemas.parquet", as_data_frame = FALSE),
-  arrow_table(movies)
+  arrow_table(cinemas)
 ) |> 
   write_parquet(sink = "data/hoyts_cinemas_temp.parquet")
 
